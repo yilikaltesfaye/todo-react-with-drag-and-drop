@@ -3,6 +3,8 @@ import { myTodos } from "./data/todos";
 import { useState } from 'react';
 import List from './Components/List';
 import uuid from 'react-uuid';
+import { DndContext } from '@dnd-kit/core';
+import { SortableContext } from '@dnd-kit/sortable';
 
 function App() {
   const [todos, setTodos] = useState(myTodos)  
@@ -36,6 +38,24 @@ function App() {
     setTodos(filtered)
   }
 
+  const handleDragEnd = (event) => {
+    const {active, over } = event 
+
+    if(active.id !== over.id){
+      setTodos((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id)
+        const newIndex = items.findIndex((item) => item.id === over.id)
+
+        const newItems = [...items]
+
+        newItems.splice(oldIndex, 1)
+        newItems.splice(newIndex, 0, items[oldIndex])
+
+        return newItems
+      })
+    }
+  }
+
   return (
     <AppStyled className='App'>
       <form action='' className='form' onSubmit={handleSubmit}>
@@ -47,21 +67,25 @@ function App() {
           </div>
         </div>
       </form>
-
-      <ul className="todos-con">
-        {
-          todos.map((todo) => {
-            const{id, name, completed} = todo
-            return <List 
-                key={id} 
-                id={id} 
-                name={name} 
-                completed={completed} 
-                removeTodo = {removeTodo}
-                />
-          })
-        }
-      </ul>
+    <DndContext onDragEnd={handleDragEnd}>
+      <SortableContext items={todos.map((todo) => todo.id)}>
+        <ul className="todos-con">
+          {
+            todos.map((todo) => {
+              const{id, name, completed} = todo
+              return <List 
+                  key={id} 
+                  id={id} 
+                  name={name} 
+                  completed={completed} 
+                  removeTodo = {removeTodo}
+                  />
+            })
+          }
+        </ul>
+      </SortableContext>
+    </DndContext>
+      
     </AppStyled>
   );
 }
