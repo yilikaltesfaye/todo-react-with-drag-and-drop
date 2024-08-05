@@ -5,10 +5,13 @@ import List from './Components/List';
 import uuid from 'react-uuid';
 import { DndContext } from '@dnd-kit/core';
 import { SortableContext } from '@dnd-kit/sortable';
+import { useThemeContext } from './Context/themeContext';
 
 function App() {
   const [todos, setTodos] = useState(myTodos)  
   const [value, setValue] = useState('')
+
+  const theme = useThemeContext();
 
   const handleChange = (e) => {
     setValue(e.target.value)
@@ -57,7 +60,7 @@ function App() {
   }
 
   return (
-    <AppStyled className='App'>
+    <AppStyled className='App' theme={theme}>
       <form action='' className='form' onSubmit={handleSubmit}>
         <h1>Today's Tasks</h1>
         <div className="input-container">
@@ -90,7 +93,61 @@ function App() {
   );
 }
 const AppStyled = styled.div`
+  min-height: 100vh;
+  padding: 5rem 25rem;
+  background-color: ${(props) => props.theme.colorBg3};
+  overflow: hidden;
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* align-items: center; */
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: ${(props) => props.theme.colorBg2};
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    padding: 2rem 1rem;
+    /* width: 50rem; */
+    box-shadow: ${(props) => props.theme.shadow3};
+    h1 {
+      font-size: clamp(1.5rem, 2vw, 2.5rem);
+      font-weight: 800;
+      color: ${(props) => props.theme.colorPrimaryGreen};
+    }
+    .input-container{
+      margin: 2rem 0;
+      position: relative;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
+      input, button {
+        font-family: inherit;
+        font-size: clamp(1rem, 2vw, 1.2rem);
+      }
+      input {
+        background: transparent;
+        border: 1px solid ${(props) => props.theme.colorIcons3};
+        border-radius: 7px;
+        padding: .8rem 1rem;
+        color: ${(props) => props.theme.colorGrey2};
+        width: 100%;
+        &:focus {
+          outline: none;
+        }
+        &:placeholder{
+          color: ${(props) => props.theme.colorGrey3};
+        }
+        &:active, &:focus {
+          border: 1px solid ${(props) => props.theme.colorIcons};
+        }
+      }
+    }
+
+  }
 `;
 
 export default App;
